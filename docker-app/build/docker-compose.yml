@@ -5,9 +5,8 @@ services:
     build: ./php/php56/
     ports:
       - "9056:9056"
-    links:
-      - mysql-db:mysql-db
-      - redis-db:redis-db
+    networks:
+      - z-net
     depends_on:
       - mysql-db
       - redis-db      
@@ -25,9 +24,8 @@ services:
     build: ./php/php72/
     ports:
       - "9072:9072"
-    links:
-      - mysql-db:mysql-db
-      - redis-db:redis-db
+    networks:
+      - z-net
     depends_on:
       - mysql-db
       - redis-db      
@@ -47,9 +45,8 @@ services:
     depends_on:
       - php56-fpm
       - php72-fpm
-    links:
-      - php56-fpm:php56-fpm
-      - php72-fpm:php72-fpm
+    networks:
+      - z-net
     volumes:
       - ../../workspace:/var/www:rw
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
@@ -68,6 +65,8 @@ services:
     build: ./mysql
     ports:
       - "3306:3306"
+    networks:
+      - z-net
     volumes:
       - ../data/mysql:/var/lib/mysql:rw
       - ../logs/mysql:/var/lib/mysql-logs:rw
@@ -85,9 +84,12 @@ services:
     build: ./redis
     ports:
       - "6379:6379"
+    networks:
+      - z-net
     volumes:
       - ../data/redis:/data
     restart: always
 
-
-    
+networks:
+    z-net:
+      driver: bridge
